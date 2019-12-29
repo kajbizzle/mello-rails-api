@@ -1,24 +1,11 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Mello is a web app with similar features to Trello, built using HTL, CSS and Javascript.
 
-Things you may want to cover:
+![Front Page](https://github.com/kajbizzle/mello-rails-api/blob/master/mello_front_page.png)
 
-* Ruby version
 
-* System dependencies
+![Edit List](https://github.com/kajbizzle/mello-rails-api/blob/master/mello_edit_list.png)
 
-* Configuration
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+![Contributor Modal](https://github.com/kajbizzle/mello-rails-api/blob/master/mello_contributor.png)
