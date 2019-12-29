@@ -1,65 +1,65 @@
-const $logoutButton = $('#logout');
-const $boardContainer = $('.container');
-const $boardName = $('header > h1');
-const $createListInput = $('#create-list input');
-const $saveListButton = $('#create-list .save');
-const $createCardInput = $('#create-card textarea');
-const $saveCardButton = $('#create-card .save');
-const $editListInput = $('#edit-list input');
-const $editListSaveButton = $('#edit-list .save');
-const $editListDeleteButton = $('#edit-list .delete');
-const $editCardInput = $('#edit-card textarea');
-const $editCardSaveButton = $('#edit-card .save');
-const $editCardDeleteButton = $('#edit-card .delete');
+const $logoutButton = $(`#logout`);
+const $boardContainer = $(`.container`);
+const $boardName = $(`header > h1`);
+const $createListInput = $(`#create-list input`);
+const $saveListButton = $(`#create-list .save`);
+const $createCardInput = $(`#create-card textarea`);
+const $saveCardButton = $(`#create-card .save`);
+const $editListInput = $(`#edit-list input`);
+const $editListSaveButton = $(`#edit-list .save`);
+const $editListDeleteButton = $(`#edit-list .delete`);
+const $editCardInput = $(`#edit-card textarea`);
+const $editCardSaveButton = $(`#edit-card .save`);
+const $editCardDeleteButton = $(`#edit-card .delete`);
 const $contributorModalButton = $('#contributors');
-const $contributorModalInput = $('#contributor-email');
-const $contributorModalSaveButton = $('#contribute .save');
-const $contributorModalList = $('#contributors-content ul');
+const $contributorModalInput = $(`#contributor-email`);
+const $contributorModalSaveButton = $(`#contribute .save`);
+const $contributorModalList = $(`#contributors-content ul`);
+
 
 let board;
 
 init();
 
 function init() {
-  let boardID = location.pathname.split('/')[2];
+  let boardID = location.pathname.split(`/`)[2];
   getBoard(boardID);
 }
 
 function getBoard(id) {
   $.ajax({
     url: `/api/boards/${id}`,
-    method: 'GET'
+    method: `GET`
+  }).then(function(data) {
+    board = data;
+    renderBoard();
   })
-    .then(function(data) {
-      board = data;
-      renderBoard();
-    })
-    .catch(function(err) {
-      if (err.statusText === 'Unauthorized') {
-        location.replace('/boards');
-      }
-    });
+  .catch(function(err) {
+    if (err.statusText === `Unauthorized`) {
+      location.replace(`/boards`);
+     } 
+  });
 }
 
 function handleLogout() {
   $.ajax({
-    url: '/logout',
-    method: 'DELETE'
+    url: `/logout`,
+    method: `DELETE`
   }).then(function() {
     localStorage.clear();
-    location.replace('/');
+    location.replace(`/`);
   });
 }
 
 function createCards(list) {
-  let $cardUl = $('<ul>');
+  let $cardUl = $(`<ul>`);
 
   let $cardLis = list.cards.map(function(card) {
-    let $cardLi = $('<li>');
-    let $cardButton = $('<button>')
-      .text(card.text)
-      .data({ ...card, list_id: list.id })
-      .on('click', openCardEditModal);
+    let $cardLi = $(`<li>`);
+    let $cardButton = $(`<button>`)
+    .text(card.text)
+    .data({ ...card, list_id: list.id})
+    .on(`click`, openCardEditModal);
 
     $cardLi.append($cardButton);
 
@@ -73,17 +73,14 @@ function createCards(list) {
 
 function createLists(lists) {
   let $listContainers = lists.map(function(list) {
-    let $listContainer = $('<div class="list">').data(list);
-    let $header = $('<header>');
-    let $headerButton = $('<button>')
+    let $listContainer = $(`<div class="list">`).data(list);
+    let $header = $(`<header>`);
+    let $headerButton = $(`<button>`)
       .text(list.title)
       .data(list)
-      .on('click', openListEditModal);
+      .on(`click`, openListEditModal);
     let $cardUl = createCards(list);
-    let $addCardButton = $('<button>Add a card...</button>').on(
-      'click',
-      openCardCreateModal
-    );
+    let $addCardButton = $(`<button>Add a card...</button>`).on(`click`, openCardCreateModal);
 
     $header.append($headerButton);
     $listContainer.append($header);
@@ -93,10 +90,11 @@ function createLists(lists) {
     return $listContainer;
   });
 
-  let $addListContainer = $('<div class="list add">');
-  let $addListButton = $('<button>')
-    .text('+ Add another list')
-    .on('click', openListCreateModal);
+  let $addListContainer = $(`<civ class="list add">`);
+  let $addListButton = $(`<button>`)
+    .text(`+ Add another list`)
+    .on(`click`, openListCreateModal);
+ 
 
   $addListContainer.append($addListButton);
   $listContainers.push($addListContainer);
@@ -118,8 +116,8 @@ function renderBoard() {
 
 function renderContributors() {
   let $contributorListItems = board.users.map(function(user) {
-    let $contributorListItem = $('<li>');
-    let $contributorSpan = $('<span>').text(user.email);
+    let $contributorListItem = $(`<li>`);
+    let $contributorSpan = $(`<span>`).text(user.email);
     let $contributorDeleteButton = $('<button class="danger">Remove</button>')
       .data(user)
       .on('click', handleContributorDelete);
@@ -133,15 +131,14 @@ function renderContributors() {
   $contributorModalList.append($contributorListItems);
 }
 
-
 function makeSortable() {
   Sortable.create($boardContainer[0], {
     animation: 150,
-    ghostClass: 'ghost',
-    filter: '.add',
-    easing: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+    ghostClass: `ghost`,
+    filter: `.add`,
+    easing: `cubic-bezier(0.785, 0.135, 0.15, 0.86)`,
     onMove: function(event) {
-      let shouldMove = !$(event.related).hasClass('add');
+      let shouldMove = !$(event.related).hasClass(`add`);
       return shouldMove;
     },
     onEnd: function(event) {
@@ -157,27 +154,27 @@ function makeSortable() {
         data: {
           position: newPosition
         },
-        method: 'PUT'
+        method: `PUT`
       }).then(function() {
         init();
       });
     }
   });
 
-  $('.list > ul').each(function(index, element) {
+  $(`.list > ul`).each(function(index, element) {
     Sortable.create(element, {
       animation: 150,
-      ghostClass: 'ghost',
-      easing: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
-      group: 'shared',
+      ghostClass: `ghost`,
+      easing: `cubic-bezier(0.785, 0.135, 0.15, 0.86)`,
+      group: `shared`,
       onEnd: function(event) {
         let { id, position, list_id } = $(event.item)
-          .find('button')
+          .find(`button`)
           .data();
         let newPosition = event.newIndex + 1;
         let newListId = $(event.item)
-          .parents('.list')
-          .data('id');
+          .parents(`.list`)
+          .data(`id`);
 
         if (position === newPosition && list_id === newListId) {
           return;
@@ -185,7 +182,7 @@ function makeSortable() {
 
         $.ajax({
           url: `/api/cards/${id}`,
-          method: 'PUT',
+          method: `PUT`,
           data: {
             list_id: newListId,
             position: newPosition
@@ -199,7 +196,7 @@ function makeSortable() {
 }
 
 function openListCreateModal() {
-  $createListInput.val('');
+  $createListInput.val(``);
   MicroModal.show(`create-list`);
 }
 
@@ -209,101 +206,100 @@ function handleListCreate(event) {
   let listTitle = $createListInput.val().trim();
 
   if (!listTitle) {
-    MicroModal.close('create-list');
+    MicroModal.close(`create-list`);
     return;
   }
 
   $.ajax({
-    url: '/api/lists',
-    method: 'POST',
+    url: `/api/lists`,
+    method: `POST`,
     data: {
       board_id: board.id,
       title: listTitle
     }
   }).then(function() {
     init();
-    MicroModal.close('create-list');
+    MicroModal.close(`create-list`);
   });
 }
 
-function openCardCreateModal(event) {
-  let $listContainer = $(event.target).parents('.list');
-  let listId = $listContainer.data('id');
+function openCardCreateModal() {
+  let $listContainer = $(event.target).parents(`.list`);
+  let listId = $listContainer.data(`id`);
+  $saveCardButton.data(`id`, listId);
 
-  $saveCardButton.data('id', listId);
-
-  $createCardInput.val('');
-  MicroModal.show('create-card');
+  $createCardInput.val(``);
+  MicroModal.show(`create-card`);
 }
 
 function handleCardCreate(event) {
   event.preventDefault();
 
-  let listId = $(event.target).data('id');
+  let listId = $(event.target).data(`id`);
   let cardText = $createCardInput.val().trim();
 
   if (!cardText) {
-    MicroModal.close('create-card');
+    MicroModal.close(`create-card`);
     return;
   }
 
   $.ajax({
-    url: '/api/cards',
-    method: 'POST',
+    url: `/api/cards`,
+    method: `POST`,
     data: {
       list_id: listId,
       text: cardText
     }
   }).then(function() {
     init();
-    MicroModal.close('create-card');
+    MicroModal.close(`create-card`);
   });
 }
 
 function openListEditModal(event) {
   let listData = $(event.target).data();
-
+  
   $editListInput.val(listData.title);
   $editListSaveButton.data(listData);
   $editListDeleteButton.data(listData);
 
-  MicroModal.show('edit-list');
+  MicroModal.show(`edit-list`);
 }
 
-function handleListEdit(event) {
+function handleListEdit() {
   event.preventDefault();
 
   let { title, id } = $(event.target).data();
   let newTitle = $editListInput.val().trim();
 
   if (!newTitle || newTitle === title) {
-    MicroModal.close('edit-list');
+    MicroModal.close(`edit-list`);
     return;
   }
 
   $.ajax({
     url: `/api/lists/${id}`,
-    method: 'PUT',
+    method: `PUT`,
     data: {
       title: newTitle
     }
   }).then(function() {
     init();
-    MicroModal.close('edit-list');
+    MicroModal.close(`edit-list`);
   });
 }
 
-function handleListDelete(event) {
+function handleListDelete() {
   event.preventDefault();
 
   let { id } = $(event.target).data();
 
   $.ajax({
     url: `/api/lists/${id}`,
-    method: 'DELETE'
+    method: `DELETE`
   }).then(function() {
     init();
-    MicroModal.close('edit-list');
+    MicroModal.close(`edit-list`);
   });
 }
 
@@ -314,7 +310,7 @@ function openCardEditModal(event) {
   $editCardSaveButton.data(cardData);
   $editCardDeleteButton.data(cardData);
 
-  MicroModal.show('edit-card');
+  MicroModal.show(`edit-card`);
 }
 
 function handleCardSave(event) {
@@ -324,19 +320,19 @@ function handleCardSave(event) {
   let newText = $editCardInput.val().trim();
 
   if (!newText || newText === text) {
-    MicroModal.close('edit-card');
+    MicroModal.close(`edit-card`);
     return;
   }
 
   $.ajax({
     url: `/api/cards/${id}`,
-    method: 'PUT',
+    method: `PUT`,
     data: {
       text: newText
     }
   }).then(function() {
     init();
-    MicroModal.close('edit-card');
+    MicroModal.close(`edit-card`);
   });
 }
 
@@ -347,16 +343,16 @@ function handleCardDelete(event) {
 
   $.ajax({
     url: `/api/cards/${id}`,
-    method: 'DELETE'
+    method: `DELETE`
   }).then(function() {
     init();
-    MicroModal.close('edit-card');
+    MicroModal.close(`edit-card`);
   });
 }
 
-function displayMessage(msg, type = 'hidden') {
-  $('#contribute .message')
-    .attr('class', `message ${type}`)
+function displayMessage(msg, type = `hidden`) {
+  $(`#contribute .message`)
+    .attr(`class`, `message ${type}`)
     .text(msg);
 }
 
@@ -365,12 +361,15 @@ function handleContributorSave(event) {
 
   let emailRegex = /.+@.+\..+/;
 
-  let contributorEmail = $contributorModalInput.val().trim();
+  let contributorEmail = $contributorModalInput
+    .val()
+    .trim()
+    .toLowerCase();
 
-  $contributorModalInput.val('');
+  $contributorModalInput.val(``);
 
   if (!emailRegex.test(contributorEmail)) {
-    displayMessage(`Must provide a valid email address`, 'danger');
+    displayMessage(`Must provide a valid email address`, `danger`);
     return;
   }
 
@@ -380,63 +379,59 @@ function handleContributorSave(event) {
 
   if (contributor) {
     displayMessage(
-      `${contributorEmail} already has access to the board`,
-      'danger'
-    );
+      `${contributorEmail} already has access to the board`, `danger`);
     return;
   }
 
   $.ajax({
-    url: '/api/user_boards',
-    method: 'POST',
+    url: `/api/user_boards`,
+    method: `POST`,
     data: {
       email: contributorEmail,
-      board_id: board.id
+      board_id: board.id 
     }
+  }).then(function() {
+    init();
+    displayMessage(
+      `Successfully added ${contributorEmail} to the board`, `success`);
   })
-    .then(function() {
-      init();
-      displayMessage(
-        `Successfully added ${contributorEmail} to the board`,
-        'success'
-      );
-    })
-    .catch(function() {
-      displayMessage(
-        `Cannot find user with email: ${contributorEmail}`,
-        'danger'
-      );
-    });
+  .catch(function() {
+    displayMessage(
+      `Cannot find user with email: ${contributorEmail}`, `danger`);
+  });
 }
 
 function openContributorModal() {
-  $contributorModalInput.val('');
-  displayMessage('');
+  $contributorModalInput.val(``);
+  displayMessage(``);
 
-  MicroModal.show('contribute');
+  MicroModal.show(`contribute`);
 }
 
 function handleContributorDelete(event) {
   let { id, email } = $(event.target).data();
 
   $.ajax({
-    url: '/api/user_boards',
-    method: 'DELETE',
+    url: `/api/user_boards`,
+    method: `DELETE`,
     data: {
       user_id: id,
       board_id: board.id
     }
   }).then(function() {
     init();
-    displayMessage(`Successfully removed user: ${email}`, 'success');
+    displayMessage(`Successfully removed user: ${email}`, `success`);
   });
 }
 
-$contributorModalSaveButton.on('click', handleContributorSave);
-$contributorModalButton.on('click', openContributorModal);
-$saveListButton.on('click', handleListCreate);
+
+$contributorModalSaveButton.on(`click`, handleContributorSave);
+$contributorModalButton.on(`click`, openContributorModal);
+$contributorModalButton.on('click', MicroModal.show.bind(null, 'contribute'));
+$saveListButton.on(`click`, handleListCreate);
 $logoutButton.on('click', handleLogout);
-$editListSaveButton.on('click', handleListEdit);
-$editListDeleteButton.on('click', handleListDelete);
-$editCardSaveButton.on('click', handleCardSave);
-$editCardDeleteButton.on('click', handleCardDelete);
+$saveCardButton.on(`click`, handleCardCreate);
+$editListSaveButton.on(`click`, handleListEdit);
+$editListDeleteButton.on(`click`, handleListDelete);
+$editCardSaveButton.on(`click`, handleCardSave);
+$editCardDeleteButton.on(`click`, handleCardDelete);
